@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ShadowView">
+        <!--被绘制阴影的控件的圆角-->
+        <attr name="shadowRound" format="dimension" />
+        <!--左侧实际可供显示的区域-->
+        <attr name="shadowLeftHeight" format="dimension" />
+        <!--顶部实际可供显示的区域-->
+        <attr name="shadowTopHeight" format="dimension" />
+        <!--右侧实际可供显示的区域-->
+        <attr name="shadowRightHeight" format="dimension" />
+        <!--底部实际可供显示的区域-->
+        <attr name="shadowBottomHeight" format="dimension" />
+        <!--阴影的 Y 轴位移，对应设计稿 Offset 的 Y 参数-->
+        <attr name="shadowOffsetY" format="dimension" />
+        <!--阴影的 X 轴位移，对应设计稿 Offset 的 X 参数-->
+        <attr name="shadowOffsetX" format="dimension" />
+        <!--被绘制阴影的控件的背景色-->
+        <attr name="shadowCardColor" format="color" />
+        <!--阴影的颜色-->
+        <attr name="shadowColor" format="color" />
+        <!--阴影的范围，对应设计稿的 Blur 参数-->
+        <attr name="shadowRadius" format="dimension" />
+
+        <attr name="targetView" format="reference" />
+    </declare-styleable>
+
+</resources>
