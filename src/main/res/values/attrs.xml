@@ -3,7 +3,7 @@
 
     <declare-styleable name="ShadowView">
         <!--阴影的形状 0-圆角矩形 1-圆形 -->
-        <attr name="shape" format="integer" />
+        <attr name="shadowShape" format="integer" />
         <!--被绘制阴影的控件的圆角-->
         <attr name="shadowRound" format="dimension" />
         <!--左侧实际可供显示的区域-->
