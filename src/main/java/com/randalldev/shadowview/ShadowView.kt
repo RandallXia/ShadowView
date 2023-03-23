@@ -131,7 +131,6 @@ class ShadowView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
         a.recycle()
         setPadding(shadowRadius, shadowRadius, shadowRadius, shadowRadius)
-        setLayerType(LAYER_TYPE_SOFTWARE, null)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -156,8 +155,8 @@ class ShadowView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         } else {
             // 如果绘制圆形的阴影，用 drawCircle
             val radius = measuredHeight.toFloat() / 2 - shadowRadius
+            rectF = RectF(radius, radius, radius * 2 + shadowRadius, radius * 2 + shadowRadius)
             canvas.drawCircle(measuredHeight.toFloat() / 2, measuredHeight.toFloat() / 2, radius, shadowPaint)
-            rectF = RectF(radius, radius, radius, radius)
         }
         shadowPaint.utilReset()
         canvas.save()
