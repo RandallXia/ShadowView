@@ -18,6 +18,11 @@ class ShadowView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     FrameLayout(context, attrs, defStyleAttr) {
 
     /**
+     * 阴影的形状
+     */
+    private var shadowShape = 0
+
+    /**
      * 被绘制阴影的控件的圆角
      */
     private var shadowRound = 0
@@ -75,6 +80,7 @@ class ShadowView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     private fun initView(context: Context, attrs: AttributeSet?) {
         val a = context.obtainStyledAttributes(attrs, R.styleable.ShadowView)
+        shadowShape = a.getInteger(R.styleable.ShadowView_shadowShape, DEFAULT_VALUE_SHADOW_SHAPE)
         shadowRound = a.getDimensionPixelSize(R.styleable.ShadowView_shadowRound, DEFAULT_VALUE_SHADOW_ROUND)
         shadowColor = a.getColor(
             R.styleable.ShadowView_shadowColor, ContextCompat.getColor(
@@ -125,7 +131,6 @@ class ShadowView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
         a.recycle()
         setPadding(shadowRadius, shadowRadius, shadowRadius, shadowRadius)
-        setLayerType(LAYER_TYPE_SOFTWARE, null)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -141,13 +146,18 @@ class ShadowView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         val top = shadowTopHeight.toFloat()
         val right = (width - shadowRightHeight).toFloat()
         val bottom = (height - shadowBottomHeight).toFloat()
-        // 如果绘制圆形的阴影，用 drawCircle
-        //shadowPaint.setShadowLayer(shadowRadius.toFloat(), 0f, 0f, shadowColor)
-        //canvas.drawCircle(measuredHeight.toFloat() / 2, measuredHeight.toFloat() / 2, measuredHeight.toFloat() / 2 - shadowRadius, shadowPaint)
-        // 如果绘制圆角矩形的阴影，用 drawRoundRect
+        val rectF: RectF
         shadowPaint.setShadowLayer(shadowRadius.toFloat(), shadowOffsetX.toFloat(), shadowOffsetY.toFloat(), shadowColor)
-        val rectF = RectF(left, top, right, bottom)
-        canvas.drawRoundRect(rectF, shadowRound.toFloat(), shadowRound.toFloat(), shadowPaint)
+        if (shadowShape == 0) {
+            // 如果绘制圆角矩形的阴影，用 drawRoundRect
+            rectF = RectF(left, top, right, bottom)
+            canvas.drawRoundRect(rectF, shadowRound.toFloat(), shadowRound.toFloat(), shadowPaint)
+        } else {
+            // 如果绘制圆形的阴影，用 drawCircle
+            val radius = measuredHeight.toFloat() / 2 - shadowRadius
+            rectF = RectF(radius, radius, radius * 2 + shadowRadius, radius * 2 + shadowRadius)
+            canvas.drawCircle(measuredHeight.toFloat() / 2, measuredHeight.toFloat() / 2, radius, shadowPaint)
+        }
         shadowPaint.utilReset()
         canvas.save()
 
@@ -157,6 +167,7 @@ class ShadowView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     companion object {
         private val DEFAULT_VALUE_SHADOW_COLOR = R.color.shadow_default_color
         private val DEFAULT_VALUE_SHADOW_CARD_COLOR = R.color.shadow_card_default_color
+        private const val DEFAULT_VALUE_SHADOW_SHAPE = 0
         private const val DEFAULT_VALUE_SHADOW_ROUND = 0
         private const val DEFAULT_VALUE_SHADOW_RADIUS = 40
         private const val DEFAULT_VALUE_SHADOW_TOP_HEIGHT = 40
