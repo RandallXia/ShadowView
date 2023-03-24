@@ -1,7 +1,10 @@
 package com.randalldev.shadowview
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
@@ -146,22 +149,18 @@ class ShadowView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         val top = shadowTopHeight.toFloat()
         val right = (width - shadowRightHeight).toFloat()
         val bottom = (height - shadowBottomHeight).toFloat()
-        val rectF: RectF
         shadowPaint.setShadowLayer(shadowRadius.toFloat(), shadowOffsetX.toFloat(), shadowOffsetY.toFloat(), shadowColor)
         if (shadowShape == 0) {
             // 如果绘制圆角矩形的阴影，用 drawRoundRect
-            rectF = RectF(left, top, right, bottom)
+            val rectF = RectF(left, top, right, bottom)
             canvas.drawRoundRect(rectF, shadowRound.toFloat(), shadowRound.toFloat(), shadowPaint)
         } else {
             // 如果绘制圆形的阴影，用 drawCircle
             val radius = measuredHeight.toFloat() / 2 - shadowRadius
-            rectF = RectF(radius, radius, radius * 2 + shadowRadius, radius * 2 + shadowRadius)
             canvas.drawCircle(measuredHeight.toFloat() / 2, measuredHeight.toFloat() / 2, radius, shadowPaint)
         }
         shadowPaint.utilReset()
         canvas.save()
-
-        drawChild(canvas, shadowPaint, rectF) { super.dispatchDraw(it) }
     }
 
     companion object {
@@ -181,27 +180,6 @@ class ShadowView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             val scale = context.resources.displayMetrics.density
             return (dipValue * scale + 0.5f).toInt()
         }
-    }
-
-    private fun drawChild(canvas: Canvas, shadowPaint: Paint, contentRectF: RectF, block: (Canvas) -> Unit) {
-        canvas.saveLayer(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat(), shadowPaint)
-
-        //先绘制子控件
-        block.invoke(canvas)
-
-        //使用path构建四个圆角
-        val path = Path().apply {
-            addRect(contentRectF, Path.Direction.CW)
-            addRoundRect(contentRectF, shadowRound.toFloat() * 2, shadowRound.toFloat() * 2, Path.Direction.CW)
-            fillType = Path.FillType.EVEN_ODD
-        }
-
-        //使用xfermode在图层上进行合成，处理圆角
-        shadowPaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
-        canvas.drawPath(path, shadowPaint)
-        shadowPaint.utilReset()
-
-        canvas.restore()
     }
 
     /**
